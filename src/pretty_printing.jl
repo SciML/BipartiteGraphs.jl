@@ -1,0 +1,104 @@
+# Matrix whose only purpose is to pretty-print the bipartite graph
+struct BipartiteAdjacencyList
+    u::Union{Vector{Int}, Nothing}
+    highlight_u::Union{Set{Int}, Nothing}
+    match::Union{Int, Bool, Unassigned}
+end
+function BipartiteAdjacencyList(u::Union{Vector{Int}, Nothing})
+    BipartiteAdjacencyList(u, nothing, unassigned)
+end
+
+struct HighlightInt
+    i::Int
+    highlight::Symbol
+    match::Bool
+end
+Base.typeinfo_implicit(::Type{HighlightInt}) = true
+function Base.show(io::IO, hi::HighlightInt)
+    if hi.match
+        printstyled(io, "(", color = hi.highlight)
+        printstyled(io, hi.i, color = hi.highlight)
+        printstyled(io, ")", color = hi.highlight)
+    else
+        printstyled(io, hi.i, color = hi.highlight)
+    end
+end
+
+function Base.show(io::IO, l::BipartiteAdjacencyList)
+    if l.match === true
+        printstyled(io, "∫ ", color = :cyan)
+    else
+        printstyled(io, "  ")
+    end
+    if l.u === nothing
+        printstyled(io, '⋅', color = :light_black)
+    elseif isempty(l.u)
+        printstyled(io, '∅', color = :light_black)
+    elseif l.highlight_u === nothing
+        print(io, l.u)
+    else
+        match = l.match
+        isa(match, Bool) && (match = unassigned)
+        function choose_color(i)
+            solvable = i in l.highlight_u
+            matched = i == match
+            if !matched && solvable
+                :default
+            elseif !matched && !solvable
+                :light_black
+            elseif matched && solvable
+                :light_yellow
+            elseif matched && !solvable
+                :magenta
+            end
+        end
+        if !isempty(setdiff(l.highlight_u, l.u))
+            # Only for debugging, shouldn't happen in practice
+            print(io,
+                map(union(l.u, l.highlight_u)) do i
+                    HighlightInt(i, !(i in l.u) ? :light_red : choose_color(i),
+                        i == match)
+                end)
+        else
+            print(io, map(l.u) do i
+                HighlightInt(i, choose_color(i), i == match)
+            end)
+        end
+    end
+end
+
+struct Label
+    s::String
+    c::Symbol
+end
+Label(s::AbstractString) = Label(s, :nothing)
+Label(x::Integer) = Label(string(x))
+Base.show(io::IO, l::Label) = printstyled(io, l.s, color = l.c)
+
+struct BipartiteGraphPrintMatrix <:
+       AbstractMatrix{Union{Label, Int, BipartiteAdjacencyList}}
+    bpg::BipartiteGraph
+end
+Base.size(bgpm::BipartiteGraphPrintMatrix) = (max(nsrcs(bgpm.bpg), ndsts(bgpm.bpg)) + 1, 3)
+function Base.getindex(bgpm::BipartiteGraphPrintMatrix, i::Integer, j::Integer)
+    checkbounds(bgpm, i, j)
+    if i == 1
+        return (Label.(("#", "src", "dst")))[j]
+    elseif j == 1
+        return i - 1
+    elseif j == 2
+        return BipartiteAdjacencyList(i - 1 <= nsrcs(bgpm.bpg) ?
+                                      𝑠neighbors(bgpm.bpg, i - 1) : nothing)
+    elseif j == 3
+        return BipartiteAdjacencyList(i - 1 <= ndsts(bgpm.bpg) ?
+                                      𝑑neighbors(bgpm.bpg, i - 1) : nothing)
+    else
+        @assert false
+    end
+end
+
+function Base.show(io::IO, b::BipartiteGraph)
+    print(io, "BipartiteGraph with (", length(b.fadjlist), ", ",
+        isa(b.badjlist, Int) ? b.badjlist : length(b.badjlist), ") (𝑠,𝑑)-vertices\n")
+    Base.print_matrix(io, BipartiteGraphPrintMatrix(b))
+end

@@ -1,0 +1,38 @@
+name: "Tests"
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - 'docs/**'
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - 'docs/**'
+
+concurrency:
+  # Skip intermediate builds: always, but for the master branch.
+  # Cancel intermediate builds: always, but for the master branch.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+jobs:
+  tests:
+    name: "Tests"
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - "1"
+          - "lts"
+          - "pre"
+    uses: "SciML/.github/.github/workflows/tests.yml@master"
+    with:
+      julia-version: "${{ matrix.version }}"
+      # Disable cache for self-hosted runners since they persist between runs
+      # Set USE_SELF_HOSTED repository variable to 'true' when using self-hosted runners
+      self-hosted: ${{ vars.USE_SELF_HOSTED == 'true' }}
+      cache: ${{ vars.USE_SELF_HOSTED != 'true' }}
+    secrets: "inherit"
