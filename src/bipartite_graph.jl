@@ -38,7 +38,7 @@ Obtain the destination vertex of a [`BipartiteEdge`](@ref).
 Graphs.dst(edge::BipartiteEdge) = edge.dst
 
 function Base.show(io::IO, edge::BipartiteEdge)
-    @unpack src, dst = edge
+    (; src, dst) = edge
     print(io, "[src: ", src, "] => [dst: ", dst, "]")
 end
 
@@ -244,7 +244,7 @@ nsrcs(g::BipartiteGraph) = length(𝑠vertices(g))
 ndsts(g::BipartiteGraph) = length(𝑑vertices(g))
 
 function Graphs.has_edge(g::BipartiteGraph, edge::BipartiteEdge)
-    @unpack src, dst = edge
+    (; src, dst) = edge
     (src in 𝑠vertices(g) && dst in 𝑑vertices(g)) || return false  # edge out of bounds
     insorted(dst, 𝑠neighbors(g, src))
 end
@@ -267,7 +267,7 @@ end
 Add `edge` to graph `g`.
 """
 function Graphs.add_edge!(g::BipartiteGraph, edge::BipartiteEdge, md = NO_METADATA)
-    @unpack fadjlist, badjlist = g
+    (; fadjlist, badjlist) = g
     s, d = src(edge), dst(edge)
     (has_𝑠vertex(g, s) && has_𝑑vertex(g, d)) || error("edge ($edge) out of range.")
     @inbounds list = fadjlist[s]
@@ -301,7 +301,7 @@ end
 Femove `edge` from graph `g`.
 """
 function Graphs.rem_edge!(g::BipartiteGraph, edge::BipartiteEdge)
-    @unpack fadjlist, badjlist = g
+    (; fadjlist, badjlist) = g
     s, d = src(edge), dst(edge)
     (has_𝑠vertex(g, s) && has_𝑑vertex(g, d)) || error("edge ($edge) out of range.")
     @inbounds list = fadjlist[s]
@@ -440,7 +440,7 @@ Base.eltype(it::BipartiteEdgeIter) = edgetype(it.g)
 
 function Base.iterate(it::BipartiteEdgeIter{SRC, <:BipartiteGraph{T}},
         state = (1, 1, SRC)) where {T}
-    @unpack g = it
+    (; g) = it
     neqs = nsrcs(g)
     neqs == 0 && return nothing
     eq, jvar = state
@@ -462,7 +462,7 @@ end
 
 function Base.iterate(it::BipartiteEdgeIter{DST, <:BipartiteGraph{T}},
         state = (1, 1, DST)) where {T}
-    @unpack g = it
+    (; g) = it
     nvars = ndsts(g)
     nvars == 0 && return nothing
     ieq, jvar = state

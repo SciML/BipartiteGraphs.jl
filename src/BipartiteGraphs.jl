@@ -1,7 +1,6 @@
 module BipartiteGraphs
 
 using DocStringExtensions
-using UnPack
 using Graphs
 
 export Matching, Unassigned, unassigned
