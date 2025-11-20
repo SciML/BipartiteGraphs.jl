@@ -31,7 +31,7 @@ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[deps.BipartiteGraphs]]
-deps = ["DocStringExtensions", "Graphs", "UnPack"]
+deps = ["DocStringExtensions", "Graphs"]
 path = "/home/runner/work/BipartiteGraphs.jl/BipartiteGraphs.jl"
 uuid = "caf10ac8-0290-4205-88aa-f15908547e8d"
 version = "0.1.0"
@@ -381,11 +381,6 @@ version = "0.11.3"
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
-
-[[deps.UnPack]]
-git-tree-sha1 = "387c1f73762231e86e0c9c5443ce3b4a0a9a0c2b"
-uuid = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
-version = "1.0.2"
 
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
