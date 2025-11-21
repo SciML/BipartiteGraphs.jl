@@ -1,3 +1,12 @@
+"""
+Abstract base type for condensation graph representations.
+
+```julia
+    (::Type{<:AbstractCondensationGraph})(g, sccs::Vector{Vector{Int}})
+```
+
+Construct an [`AbstractCondensationGraph`](@ref) from a graph and strongly connected components.
+"""
 abstract type AbstractCondensationGraph <: AbstractGraph{Int} end
 function (T::Type{<:AbstractCondensationGraph})(g, sccs::Vector{Union{Int, Vector{Int}}})
     scc_assignment = Vector{Int}(undef, isa(g, BipartiteGraph) ? ndsts(g) : nv(g))
@@ -13,11 +22,17 @@ function (T::Type{<:AbstractCondensationGraph})(g, sccs::Vector{Vector{Int}})
 end
 
 Graphs.is_directed(::Type{<:AbstractCondensationGraph}) = true
+
+"""
+    $TYPEDSIGNATURES
+
+Get the number of vertices (strongly connected components) in the condensation graph.
+"""
 Graphs.nv(icg::AbstractCondensationGraph) = length(icg.sccs)
 Graphs.vertices(icg::AbstractCondensationGraph) = Base.OneTo(nv(icg))
 
 """
-    struct MatchedCondensationGraph
+    $TYPEDEF
 
 For some bipartite-graph and an orientation induced on its destination contraction,
 records the condensation DAG of the digraph formed by the orientation. I.e. this
@@ -50,7 +65,7 @@ function Graphs.inneighbors(mcg::MatchedCondensationGraph, cc::Integer)
 end
 
 """
-    struct InducedCondensationGraph
+    $TYPEDEF
 
 For some bipartite-graph and a topologicall sorted list of connected components,
 represents the condensation DAG of the digraph formed by the orientation. I.e. this

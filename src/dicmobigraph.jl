@@ -41,13 +41,31 @@ mutable struct DiCMOBiGraph{Transposed, I, G <: BipartiteGraph{I}, M <: Matching
         new{Transposed, I, G, M}(g, ne, m)
     end
 end
+
+"""
+    $TYPEDSIGNATURES
+
+Construct a [`DiCMOBiGraph`](@ref) from a bipartite graph with an empty matching.
+"""
 function DiCMOBiGraph{Transposed}(g::BipartiteGraph) where {Transposed}
     DiCMOBiGraph{Transposed}(g, 0, Matching(ndsts(g)))
 end
+
+"""
+    $TYPEDSIGNATURES
+
+Construct a [`DiCMOBiGraph`](@ref) from a bipartite graph and a matching.
+"""
 function DiCMOBiGraph{Transposed}(g::BipartiteGraph, m::M) where {Transposed, M}
     DiCMOBiGraph{Transposed}(g, missing, m)
 end
 
+"""
+    $TYPEDSIGNATURES
+
+Return a [`DiCMOBiGraph`](@ref) with the source and destination vertices swapped. The
+returned graph aliases `g`.
+"""
 function invview(g::DiCMOBiGraph{Transposed}) where {Transposed}
     DiCMOBiGraph{!Transposed}(invview(g.graph), g.ne, invview(g.matching))
 end
@@ -60,8 +78,16 @@ function Graphs.vertices(g::DiCMOBiGraph{Transposed}) where {Transposed}
     Transposed ? 𝑑vertices(g.graph) : 𝑠vertices(g.graph)
 end
 
+"""
+    $TYPEDEF
+
+An iterator for neighbors in a [`DiCMOBiGraph`](@ref).
+"""
 struct CMONeighbors{Transposed, V}
     g::DiCMOBiGraph{Transposed}
+    """
+    The vertex whose neighbors are being iterated over.
+    """
     v::V
     function CMONeighbors{Transposed}(g::DiCMOBiGraph{Transposed},
             v::V) where {Transposed, V}
@@ -89,15 +115,27 @@ function Base.iterate(c::CMONeighbors{false}, (l, state...))
 end
 Base.length(c::CMONeighbors{false}) = count(_ -> true, c)
 
-liftint(f, x) = (!isa(x, Int)) ? nothing : f(x)
-liftnothing(f, x) = x === nothing ? nothing : f(x)
+@inline _vsrc(c::CMONeighbors{true}) = c.g.matching[c.v]
+function _neighbors(c::CMONeighbors{true})
+    vsrc = _vsrc(c)
+    if vsrc isa Int
+        return c.g.graph.fadjlist[vsrc]
+    else
+        return nothing
+    end
+end
+function Base.length(c::CMONeighbors{true})
+    nbors = _neighbors(c)
+    @something(nbors, 1) - 1
+end
 
-_vsrc(c::CMONeighbors{true}) = c.g.matching[c.v]
-_neighbors(c::CMONeighbors{true}) = liftint(vsrc -> c.g.graph.fadjlist[vsrc], _vsrc(c))
-Base.length(c::CMONeighbors{true}) = something(liftnothing(length, _neighbors(c)), 1) - 1
 Graphs.inneighbors(g::DiCMOBiGraph{true}, v) = CMONeighbors{true}(g, v)
 Graphs.outneighbors(g::DiCMOBiGraph{true}, v) = outneighbors(invview(g), v)
-Base.iterate(c::CMONeighbors{true}) = liftnothing(ns -> iterate(c, (ns,)), _neighbors(c))
+function Base.iterate(c::CMONeighbors{true})
+    nbors = _neighbors(c)
+    nbors === nothing && return nothing
+    iterate(c, (nbors::Int,))
+end
 function Base.iterate(c::CMONeighbors{true}, (l, state...))
     while true
         r = iterate(l, state...)
@@ -126,5 +164,6 @@ end
 
 Graphs.has_edge(g::DiCMOBiGraph{true}, a, b) = a in inneighbors(g, b)
 Graphs.has_edge(g::DiCMOBiGraph{false}, a, b) = b in outneighbors(g, a)
-# This definition is required for `induced_subgraph` to work
+
+# Required for `induced_subgraph` compatibility.
 (::Type{<:DiCMOBiGraph})(n::Integer) = SimpleDiGraph(n)
