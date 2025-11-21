@@ -3,7 +3,14 @@ module BipartiteGraphsSparseArraysExt
 using BipartiteGraphs
 using Graphs
 using SparseArrays: sparse
+using DocStringExtensions
 
+"""
+    $TYPEDSIGNATURES
+
+Obtain the incidence matrix for the [`BipartiteGraph`](@ref) `g`. `val` indicates the value
+to be used in non-zero entries of the returned sparse matrix.
+"""
 function Graphs.incidence_matrix(g::BipartiteGraph, val = true)
     I = Int[]
     J = Int[]
