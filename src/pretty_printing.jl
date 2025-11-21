@@ -1,13 +1,27 @@
 # Matrix whose only purpose is to pretty-print the bipartite graph
+
+"""
+A wrapper for adjacency lists used in pretty-printing bipartite graphs. Stores the
+adjacency list along with optional highlighting information and matching status.
+"""
 struct BipartiteAdjacencyList
     u::Union{Vector{Int}, Nothing}
     highlight_u::Union{Set{Int}, Nothing}
     match::Union{Int, Bool, Unassigned}
 end
+
+"""
+    $TYPEDSIGNATURES
+
+Construct a [`BipartiteAdjacencyList`](@ref) without highlighting.
+"""
 function BipartiteAdjacencyList(u::Union{Vector{Int}, Nothing})
     BipartiteAdjacencyList(u, nothing, unassigned)
 end
 
+"""
+A highlighted integer for pretty-printing, with color and matching status information.
+"""
 struct HighlightInt
     i::Int
     highlight::Symbol
@@ -67,14 +81,33 @@ function Base.show(io::IO, l::BipartiteAdjacencyList)
     end
 end
 
+"""
+A labeled string with an associated color for pretty-printing.
+"""
 struct Label
     s::String
     c::Symbol
 end
+
+"""
+    $TYPEDSIGNATURES
+
+Construct a label from a string without color.
+"""
 Label(s::AbstractString) = Label(s, :nothing)
+
+"""
+    $TYPEDSIGNATURES
+
+Construct a label from an integer.
+"""
 Label(x::Integer) = Label(string(x))
 Base.show(io::IO, l::Label) = printstyled(io, l.s, color = l.c)
 
+"""
+A matrix view of a [`BipartiteGraph`](@ref) for pretty-printing. Provides a tabular
+representation with source and destination adjacency information.
+"""
 struct BipartiteGraphPrintMatrix <:
        AbstractMatrix{Union{Label, Int, BipartiteAdjacencyList}}
     bpg::BipartiteGraph
