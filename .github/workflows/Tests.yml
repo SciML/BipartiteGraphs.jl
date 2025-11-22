@@ -35,4 +35,5 @@ jobs:
       # Set USE_SELF_HOSTED repository variable to 'true' when using self-hosted runners
       self-hosted: ${{ vars.USE_SELF_HOSTED == 'true' }}
       cache: ${{ vars.USE_SELF_HOSTED != 'true' }}
+      coverage: false
     secrets: "inherit"
