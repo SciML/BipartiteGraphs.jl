@@ -1,5 +1,5 @@
 """
-    @enum VertTyoe SRC DST
+    @enum VertType SRC DST
 
 An enum for the two types of vertices (source and destination) in  a [`BipartiteGraph`](@ref).
 """
