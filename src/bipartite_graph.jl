@@ -1,5 +1,5 @@
 """
-    @enum VertTyoe SRC DST
+    @enum VertType SRC DST
 
 An enum for the two types of vertices (source and destination) in  a [`BipartiteGraph`](@ref).
 """
@@ -189,6 +189,12 @@ if isdefined(Graphs, :has_contiguous_vertices)
     Graphs.has_contiguous_vertices(::Type{<:BipartiteGraph}) = false
 end
 Graphs.is_directed(::Type{<:BipartiteGraph}) = false
+
+"""
+    $TYPEDSIGNATURES
+
+Obtain both source and destination vertices of the graph as a tuple.
+"""
 Graphs.vertices(g::BipartiteGraph) = (𝑠vertices(g), 𝑑vertices(g))
 """
     $TYPEDSIGNATURES
@@ -237,10 +243,27 @@ function 𝑑neighbors(g::BipartiteGraph, j::Integer,
     M ? zip(backj, (g.metadata[i][j] for i in backj)) : backj
 end
 Graphs.ne(g::BipartiteGraph) = g.ne
+
+"""
+    $TYPEDSIGNATURES
+
+Get the total number of vertices (source and destination) in the graph.
+"""
 Graphs.nv(g::BipartiteGraph) = sum(length, vertices(g))
 Graphs.edgetype(g::BipartiteGraph{I}) where {I} = BipartiteEdge{I}
 
+"""
+    $TYPEDSIGNATURES
+
+Get the number of source vertices in the graph.
+"""
 nsrcs(g::BipartiteGraph) = length(𝑠vertices(g))
+
+"""
+    $TYPEDSIGNATURES
+
+Get the number of destination vertices in the graph.
+"""
 ndsts(g::BipartiteGraph) = length(𝑑vertices(g))
 
 function Graphs.has_edge(g::BipartiteGraph, edge::BipartiteEdge)
@@ -426,10 +449,32 @@ end
 ###
 ### Edges iteration
 ###
+
+"""
+    $TYPEDSIGNATURES
+
+Iterate over all edges in the graph, ordered by source vertices.
+"""
 Graphs.edges(g::BipartiteGraph) = BipartiteEdgeIter(g, Val(SRC))
+
+"""
+    $TYPEDSIGNATURES
+
+Iterate over all edges in the graph, ordered by source vertices.
+"""
 𝑠edges(g::BipartiteGraph) = BipartiteEdgeIter(g, Val(SRC))
+
+"""
+    $TYPEDSIGNATURES
+
+Iterate over all edges in the graph, ordered by destination vertices.
+"""
 𝑑edges(g::BipartiteGraph) = BipartiteEdgeIter(g, Val(DST))
 
+"""
+An iterator for edges in a [`BipartiteGraph`](@ref). The iteration order depends on the
+`type` parameter: `Val(SRC)` iterates by source vertices, `Val(DST)` iterates by destination vertices.
+"""
 struct BipartiteEdgeIter{T, G} <: Graphs.AbstractEdgeIter
     g::G
     type::Val{T}
