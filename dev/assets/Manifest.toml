@@ -2,7 +2,7 @@
 
 julia_version = "1.10.10"
 manifest_format = "2.0"
-project_hash = "7b1ef28c68c6409622ff8bd4092c052bc6dbfd2c"
+project_hash = "0937212aa4971786e5f0db4fc81256fa22605b5f"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -34,7 +34,7 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 deps = ["DocStringExtensions", "Graphs"]
 path = "/home/runner/work/BipartiteGraphs.jl/BipartiteGraphs.jl"
 uuid = "caf10ac8-0290-4205-88aa-f15908547e8d"
-version = "0.1.0"
+version = "0.1.1"
 weakdeps = ["SparseArrays"]
 
     [deps.BipartiteGraphs.extensions]
