@@ -126,7 +126,7 @@ function _neighbors(c::CMONeighbors{true})
 end
 function Base.length(c::CMONeighbors{true})
     nbors = _neighbors(c)
-    @something(nbors, 1) - 1
+    length(@something(nbors, 1)) - 1
 end
 
 Graphs.inneighbors(g::DiCMOBiGraph{true}, v) = CMONeighbors{true}(g, v)
@@ -134,7 +134,7 @@ Graphs.outneighbors(g::DiCMOBiGraph{true}, v) = outneighbors(invview(g), v)
 function Base.iterate(c::CMONeighbors{true})
     nbors = _neighbors(c)
     nbors === nothing && return nothing
-    iterate(c, (nbors::Int,))
+    iterate(c, (nbors,))
 end
 function Base.iterate(c::CMONeighbors{true}, (l, state...))
     while true
