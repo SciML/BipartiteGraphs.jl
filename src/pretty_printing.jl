@@ -7,7 +7,7 @@ adjacency list along with optional highlighting information and matching status.
 struct BipartiteAdjacencyList
     u::Union{Vector{Int}, Nothing}
     highlight_u::Union{Set{Int}, Nothing}
-    match::Union{Int, Bool, Unassigned}
+    match::Any # Int or something else
 end
 
 """
@@ -18,6 +18,19 @@ Construct a [`BipartiteAdjacencyList`](@ref) without highlighting.
 function BipartiteAdjacencyList(u::Union{Vector{Int}, Nothing})
     BipartiteAdjacencyList(u, nothing, unassigned)
 end
+
+"""
+    overview_label(::Type{T}) where {T}
+    overview_label(x) = overview_label(typeof(x))
+
+Used for pretty-printing in `BipartiteAdjacencyList`. Given the type of
+`BipartiteAdjacencyList.match`, returns a 3-tuple where the first element is
+the symbol to print, the second element is a string describing what it means,
+and the last element is the color to print it in.
+"""
+function overview_label end
+overview_label(::Type) = error("No label defined for this matching type")
+overview_label(x) = overview_label(typeof(x))
 
 """
 A highlighted integer for pretty-printing, with color and matching status information.
@@ -39,8 +52,9 @@ function Base.show(io::IO, hi::HighlightInt)
 end
 
 function Base.show(io::IO, l::BipartiteAdjacencyList)
-    if l.match === true
-        printstyled(io, "∫ ", color = :cyan)
+    if !isa(l.match, Union{Int, Unassigned})
+        (label, _, color) = overview_label(l.match)
+        printstyled(io, string(label, " "); color)
     else
         printstyled(io, "  ")
     end
@@ -52,7 +66,7 @@ function Base.show(io::IO, l::BipartiteAdjacencyList)
         print(io, l.u)
     else
         match = l.match
-        isa(match, Bool) && (match = unassigned)
+        !isa(match, Int) && (match = unassigned)
         function choose_color(i)
             solvable = i in l.highlight_u
             matched = i == match
