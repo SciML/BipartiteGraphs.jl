@@ -34,7 +34,9 @@ end
 
 Convert a matching to have element type `Union{V, Int}`.
 """
-function Matching{V}(m::Matching) where {V}
+Matching{V}(m::Matching) where {V} = convert(Matching{V}, m)
+
+function Base.convert(::Type{Matching{V}}, m::Matching) where {V}
     eltype(m) === Union{V, Int} && return m
     VUT = typeof(similar(m.match, Union{V, Int}))
     Matching{V}(convert(VUT, m.match),
