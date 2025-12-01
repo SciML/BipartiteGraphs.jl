@@ -22,4 +22,6 @@ include("dicmobigraph.jl")
 export InducedCondensationGraph, MatchedCondensationGraph
 include("condensation_graphs.jl")
 
+include("deprecations.jl")
+
 end
