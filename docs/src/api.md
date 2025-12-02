@@ -68,3 +68,21 @@ Graphs.nv(::BipartiteGraphs.AbstractCondensationGraph)
 InducedCondensationGraph
 MatchedCondensationGraph
 ```
+
+## Hyper-graphs
+
+```@docs
+HyperGraph
+HyperEdge
+Graphs.add_vertex!(::HyperGraph{V}, ::V) where {V}
+Graphs.add_edge!(::HyperGraph{V}, ::BipartiteGraphs.HyperGraphEdge{V}) where {V}
+Graphs.vertices(::HyperGraph)
+Graphs.nv(::HyperGraph)
+Graphs.has_vertex(::HyperGraph{V}, ::V) where {V}
+Graphs.ne(::HyperGraph)
+Graphs.has_edge(::HyperGraph{V}, ::HyperEdge{V}) where {V}
+Graphs.rem_edge!(::HyperGraph{V}, ::HyperEdge{V}) where {V}
+Graphs.edges(::HyperGraph{V}) where {V}
+Base.empty(::HyperGraph)
+Graphs.connected_components(::HyperGraph{V}) where {V}
+```

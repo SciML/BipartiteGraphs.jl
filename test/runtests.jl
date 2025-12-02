@@ -9,5 +9,6 @@ using Test
     @testset "DiCMOBiGraph" include("dicmobigraph.jl")
     @testset "Condensation graphs" include("condensation_graphs.jl")
     @testset "Pretty printing" include("pretty_printing.jl")
+    @testset "HyperGraph" include("hypergraph.jl")
     @testset "Integration tests" include("integration.jl")
 end

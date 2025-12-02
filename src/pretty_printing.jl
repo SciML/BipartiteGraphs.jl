@@ -149,3 +149,32 @@ function Base.show(io::IO, b::BipartiteGraph)
         isa(b.badjlist, Int) ? b.badjlist : length(b.badjlist), ") (𝑠,𝑑)-vertices\n")
     Base.print_matrix(io, BipartiteGraphPrintMatrix(b))
 end
+
+"""
+    $TYPEDSIGNATURES
+
+For a hypergraph with vertex type `V`, print to `io` a hint/label for the given edge
+`edge_i`. No hint is printed by default.
+"""
+function print_hyperedge_hint(io::IO, ::Type{V}, graph::HyperGraph{V}, edge_i::Int) where {V} end
+
+function Base.show(io::IO, graph::HyperGraph{V}) where {V}
+    printstyled(io, get(io, :cgraph_name, "HyperGraph"); color = :blue, bold = true)
+    println(io, " with ", length(graph.labels),
+        " vertices and ", nsrcs(graph.graph), " hyperedges")
+    compact = get(io, :compact, false)
+    for edge_i in 𝑠vertices(graph.graph)
+        if compact && edge_i > 5
+            println(io, "⋮")
+            break
+        end
+        print(io, "  ")
+        print_hyperedge_hint(io, V, graph, edge_i)
+        edge_idxs = 𝑠neighbors(graph.graph, edge_i)
+        print(io, "<")
+        for vi in @view(edge_idxs[1:(end - 1)])
+            print(io, graph.invmap[vi], ", ")
+        end
+        println(io, graph.invmap[edge_idxs[end]], ">")
+    end
+end
