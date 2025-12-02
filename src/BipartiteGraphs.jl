@@ -2,6 +2,13 @@ module BipartiteGraphs
 
 using DocStringExtensions
 using Graphs
+using DataStructures
+@static if pkgversion(DataStructures) >= v"0.19"
+    import DataStructures: IntDisjointSet
+else
+    import DataStructures: IntDisjointSets
+    const IntDisjointSet = IntDisjointSets
+end
 
 export Matching, Unassigned, unassigned
 include("matching.jl")
@@ -21,7 +28,7 @@ include("dicmobigraph.jl")
 export InducedCondensationGraph, MatchedCondensationGraph
 include("condensation_graphs.jl")
 
-export HyperGraph
+export HyperGraph, HyperEdge, HyperGraphEdge, neighbors, incident_edges
 include("hypergraph.jl")
 
 include("pretty_printing.jl")

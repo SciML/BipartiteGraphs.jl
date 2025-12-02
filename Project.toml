@@ -4,6 +4,7 @@ authors = ["Aayush Sabharwal <aayush.sabharwal@gmail.com>"]
 version = "0.1.2"
 
 [deps]
+DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
 
@@ -14,6 +15,7 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 BipartiteGraphsSparseArraysExt = "SparseArrays"
 
 [compat]
+DataStructures = "0.18, 0.19"
 DocStringExtensions = "0.7, 0.8, 0.9"
 Graphs = "1.5.2"
 SparseArrays = "1"
