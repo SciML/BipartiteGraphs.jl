@@ -11,7 +11,6 @@ export 𝑠vertices, 𝑑vertices, has_𝑠vertex, has_𝑑vertex, 𝑠neighbors
        𝑠edges, 𝑑edges, nsrcs, ndsts, SRC, DST, set_neighbors!, invview,
        delete_srcs!, delete_dsts!, complete, require_complete
 include("bipartite_graph.jl")
-include("pretty_printing.jl")
 
 export maximal_matching, construct_augmenting_path!
 include("maximal_matching.jl")
@@ -21,6 +20,11 @@ include("dicmobigraph.jl")
 
 export InducedCondensationGraph, MatchedCondensationGraph
 include("condensation_graphs.jl")
+
+export HyperGraph
+include("hypergraph.jl")
+
+include("pretty_printing.jl")
 
 include("deprecations.jl")
 
