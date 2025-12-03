@@ -36,9 +36,16 @@ Convert a matching to have element type `Union{V, Int}`.
 """
 Matching{V}(m::Matching) where {V} = convert(Matching{V}, m)
 
+function Base.convert(::Type{Matching{V, A}}, m::Matching) where {
+        V, A <: AbstractVector{Union{V, Int}}}
+    typeof(m) == Matching{V, A} && return m
+    Matching{V}(convert(A, m.match),
+        m.inv_match === nothing ? nothing : convert(A, m.inv_match))
+end
+
 function Base.convert(::Type{Matching{V}}, m::Matching) where {V}
     eltype(m) === Union{V, Int} && return m
-    VUT = typeof(similar(m.match, Union{V, Int}))
+    VUT = typeof(similar(m.match, Union{V, Int}, 0))
     Matching{V}(convert(VUT, m.match),
         m.inv_match === nothing ? nothing : convert(VUT, m.inv_match))
 end
