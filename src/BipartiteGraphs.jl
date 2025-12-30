@@ -35,4 +35,6 @@ include("pretty_printing.jl")
 
 include("deprecations.jl")
 
+include("precompilation.jl")
+
 end
