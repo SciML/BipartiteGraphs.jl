@@ -17,7 +17,7 @@ end
 Base.:(==)(a::HyperEdge, b::HyperEdge) = a.id == b.id && a.vertices == b.vertices
 
 function Base.show(io::IO, edge::HyperEdge)
-    print(io, "HyperEdge(", edge.id, ", ", edge.vertices, ")")
+    return print(io, "HyperEdge(", edge.id, ", ", edge.vertices, ")")
 end
 
 """
@@ -134,7 +134,7 @@ Graphs.has_vertex(g::HyperGraph{V}, v::V) where {V} = haskey(g.labels, v)
 Get the number of hyperedges in the hypergraph. Only counts non-empty hyperedges.
 """
 function Graphs.ne(g::HyperGraph)
-    count(!isempty ∘ Base.Fix1(𝑠neighbors, g.graph), 𝑠vertices(g.graph))
+    return count(!isempty ∘ Base.Fix1(𝑠neighbors, g.graph), 𝑠vertices(g.graph))
 end
 
 Graphs.edgetype(::HyperGraph{V}) where {V} = HyperEdge{V}
@@ -147,11 +147,11 @@ or as a collection of vertices.
 """
 function Graphs.has_edge(g::HyperGraph{V}, edge::HyperEdge{V}) where {V}
     edge.id in 𝑠vertices(g.graph) || return false
-    Graphs.has_edge(g, edge.vertices)
+    return Graphs.has_edge(g, edge.vertices)
 end
 
 function Graphs.has_edge(g::HyperGraph{V}, vertices::HyperGraphEdge{V}) where {V}
-    _edge_idx(g, vertices) !== nothing
+    return _edge_idx(g, vertices) !== nothing
 end
 
 function _edge_idx(g::HyperGraph{V}, vertices::HyperGraphEdge{V}) where {V}
@@ -256,7 +256,7 @@ Get the vertices in a hyperedge (specified by its integer ID).
 function neighbors(g::HyperGraph, edge_id::Int)
     edge_id in 𝑠vertices(g.graph) || throw(BoundsError(g, edge_id))
     neighbor_ids = 𝑠neighbors(g.graph, edge_id)
-    [g.invmap[j] for j in neighbor_ids]
+    return [g.invmap[j] for j in neighbor_ids]
 end
 
 """
@@ -275,7 +275,7 @@ function incident_edges(g::HyperGraph{V}, v::V) where {V}
     haskey(g.labels, v) || throw(ArgumentError("Vertex $v not in graph"))
     v_id = g.labels[v]
     edge_ids = 𝑑neighbors(g.graph, v_id)
-    [HyperEdge(i, neighbors(g, i)) for i in edge_ids]
+    return [HyperEdge(i, neighbors(g, i)) for i in edge_ids]
 end
 
 Base.length(::HyperGraph) = error("length is not well defined! Use `ne` or `nv`.")

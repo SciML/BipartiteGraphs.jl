@@ -19,7 +19,7 @@ struct BipartiteEdge{I <: Integer} <: Graphs.AbstractEdge{I}
     dst::I
     function BipartiteEdge(src::I, dst::V) where {I, V}
         T = promote_type(I, V)
-        new{T}(T(src), T(dst))
+        return new{T}(T(src), T(dst))
     end
 end
 
@@ -39,7 +39,7 @@ Graphs.dst(edge::BipartiteEdge) = edge.dst
 
 function Base.show(io::IO, edge::BipartiteEdge)
     (; src, dst) = edge
-    print(io, "[src: ", src, "] => [dst: ", dst, "]")
+    return print(io, "[src: ", src, "] => [dst: ", dst, "]")
 end
 
 Base.:(==)(a::BipartiteEdge, b::BipartiteEdge) = src(a) == src(b) && dst(a) == dst(b)
@@ -88,16 +88,20 @@ lookup at the cost of slower edge insertion.
 
 `ne` may be omitted, in which case it is inferred from the forward adjacency list.
 """
-function BipartiteGraph(ne::Integer, fadj::AbstractVector,
+function BipartiteGraph(
+        ne::Integer, fadj::AbstractVector,
         badj::Union{AbstractVector, Integer} = maximum(maximum, fadj);
-        metadata = nothing)
-    BipartiteGraph(ne, fadj, badj, metadata)
+        metadata = nothing
+    )
+    return BipartiteGraph(ne, fadj, badj, metadata)
 end
 
-function BipartiteGraph(fadj::AbstractVector,
+function BipartiteGraph(
+        fadj::AbstractVector,
         badj::Union{AbstractVector, Integer} = maximum(maximum, fadj);
-        metadata = nothing)
-    BipartiteGraph(mapreduce(length, +, fadj; init = 0), fadj, badj, metadata)
+        metadata = nothing
+    )
+    return BipartiteGraph(mapreduce(length, +, fadj; init = 0), fadj, badj, metadata)
 end
 
 """
@@ -106,7 +110,7 @@ end
 Utility function to throw an error if the graph `g` is not [`complete`](@ref).
 """
 @noinline function require_complete(g::BipartiteGraph)
-    g.badjlist isa AbstractVector ||
+    return g.badjlist isa AbstractVector ||
         throw(ArgumentError("The graph has no back edges. Use `complete`."))
 end
 
@@ -118,7 +122,7 @@ returned graph aliases `g`. Requires that `g` is [`complete`](@ref).
 """
 function invview(g::BipartiteGraph)
     require_complete(g)
-    BipartiteGraph(g.ne, g.badjlist, g.fadjlist)
+    return BipartiteGraph(g.ne, g.badjlist, g.fadjlist)
 end
 
 """
@@ -134,7 +138,7 @@ function complete(g::BipartiteGraph{I}) where {I}
             push!(badjlist[d], s)
         end
     end
-    BipartiteGraph(g.ne, g.fadjlist, badjlist)
+    return BipartiteGraph(g.ne, g.fadjlist, badjlist)
 end
 
 """
@@ -146,7 +150,7 @@ function Base.isequal(bg1::BipartiteGraph{T}, bg2::BipartiteGraph{T}) where {T <
     iseq = (bg1.ne == bg2.ne)
     iseq &= (bg1.fadjlist == bg2.fadjlist)
     iseq &= (bg1.badjlist == bg2.badjlist)
-    iseq
+    return iseq
 end
 
 """
@@ -156,16 +160,20 @@ Build an empty [`BipartiteGraph`](@ref) with `nsrcs` sources and `ndsts` destina
 By default, the constructed graph is [`complete`](@ref)d. To avoid this
 and lazily compute backward adjacency, pass `Val(false)` as the third argument.
 """
-function BipartiteGraph(nsrcs::T, ndsts::T, backedge::Val{B} = Val(true);
-        metadata = nothing) where {T, B}
+function BipartiteGraph(
+        nsrcs::T, ndsts::T, backedge::Val{B} = Val(true);
+        metadata = nothing
+    ) where {T, B}
     fadjlist = map(_ -> T[], 1:nsrcs)
     badjlist = B ? map(_ -> T[], 1:ndsts) : ndsts
-    BipartiteGraph(0, fadjlist, badjlist, metadata)
+    return BipartiteGraph(0, fadjlist, badjlist, metadata)
 end
 
 function Base.copy(bg::BipartiteGraph)
-    BipartiteGraph(bg.ne, map(copy, bg.fadjlist), map(copy, bg.badjlist),
-        deepcopy(bg.metadata))
+    return BipartiteGraph(
+        bg.ne, map(copy, bg.fadjlist), map(copy, bg.badjlist),
+        deepcopy(bg.metadata)
+    )
 end
 Base.eltype(::Type{<:BipartiteGraph{I}}) where {I} = I
 
@@ -181,7 +189,7 @@ function Base.empty!(g::BipartiteGraph)
     if g.metadata !== nothing
         foreach(empty!, g.metadata)
     end
-    g
+    return g
 end
 Base.length(::BipartiteGraph) = error("length is not well defined! Use `ne` or `nv`.")
 
@@ -208,7 +216,7 @@ Obtain the number of source vertices in the graph.
 Obtain the number of destination vertices in the graph.
 """
 function 𝑑vertices(g::BipartiteGraph)
-    g.badjlist isa AbstractVector ? axes(g.badjlist, 1) : Base.OneTo(g.badjlist)
+    return g.badjlist isa AbstractVector ? axes(g.badjlist, 1) : Base.OneTo(g.badjlist)
 end
 """
     $TYPEDSIGNATURES
@@ -227,20 +235,24 @@ has_𝑑vertex(g::BipartiteGraph, v::Integer) = v in 𝑑vertices(g)
 
 Obtain the neighbors of source vertex `i` in graph `g`.
 """
-function 𝑠neighbors(g::BipartiteGraph, i::Integer,
-        with_metadata::Val{M} = Val(false)) where {M}
-    M ? zip(g.fadjlist[i], g.metadata[i]) : g.fadjlist[i]
+function 𝑠neighbors(
+        g::BipartiteGraph, i::Integer,
+        with_metadata::Val{M} = Val(false)
+    ) where {M}
+    return M ? zip(g.fadjlist[i], g.metadata[i]) : g.fadjlist[i]
 end
 """
     $TYPEDSIGNATURES
 
 Obtain the neighbors of destination vertex `i` in graph `g`.
 """
-function 𝑑neighbors(g::BipartiteGraph, j::Integer,
-        with_metadata::Val{M} = Val(false)) where {M}
+function 𝑑neighbors(
+        g::BipartiteGraph, j::Integer,
+        with_metadata::Val{M} = Val(false)
+    ) where {M}
     require_complete(g)
     backj = g.badjlist[j]::Vector{Int}
-    M ? zip(backj, (g.metadata[i][j] for i in backj)) : backj
+    return M ? zip(backj, (g.metadata[i][j] for i in backj)) : backj
 end
 Graphs.ne(g::BipartiteGraph) = g.ne
 
@@ -269,7 +281,7 @@ ndsts(g::BipartiteGraph) = length(𝑑vertices(g))
 function Graphs.has_edge(g::BipartiteGraph, edge::BipartiteEdge)
     (; src, dst) = edge
     (src in 𝑠vertices(g) && dst in 𝑑vertices(g)) || return false  # edge out of bounds
-    insorted(dst, 𝑠neighbors(g, src))
+    return insorted(dst, 𝑠neighbors(g, src))
 end
 Base.in(edge::BipartiteEdge, g::BipartiteGraph) = Graphs.has_edge(g, edge)
 
@@ -282,7 +294,7 @@ const NO_METADATA = NoMetadata()
 Add an edge from source `i` to destination `j` in graph `g`.
 """
 function Graphs.add_edge!(g::BipartiteGraph, i::Integer, j::Integer, md = NO_METADATA)
-    add_edge!(g, BipartiteEdge(i, j), md)
+    return add_edge!(g, BipartiteEdge(i, j), md)
 end
 """
     $TYPEDSIGNATURES
@@ -316,7 +328,7 @@ end
 Remove the edge from source `i` to destination `j` in graph `g`.
 """
 function Graphs.rem_edge!(g::BipartiteGraph, i::Integer, j::Integer)
-    Graphs.rem_edge!(g, BipartiteEdge(i, j))
+    return Graphs.rem_edge!(g, BipartiteEdge(i, j))
 end
 """
     $TYPEDSIGNATURES
@@ -330,7 +342,7 @@ function Graphs.rem_edge!(g::BipartiteGraph, edge::BipartiteEdge)
     @inbounds list = fadjlist[s]
     index = searchsortedfirst(list, d)
     @inbounds (index <= length(list) && list[index] == d) ||
-              error("graph does not have edge $edge")
+        error("graph does not have edge $edge")
     deleteat!(list, index)
     g.ne -= 1
     if badjlist isa AbstractVector
@@ -389,7 +401,7 @@ function set_neighbors!(g::BipartiteGraph, i::Integer, new_neighbors)
             end
         end
     end
-    if iszero(new_nneighbors) # this handles Tuple as well
+    return if iszero(new_nneighbors) # this handles Tuple as well
         # Warning: Aliases old_neighbors
         empty!(g.fadjlist[i])
     else
@@ -432,7 +444,7 @@ function delete_srcs!(g::BipartiteGraph{I}, srcs; rm_verts = false) where {I}
         end
         deleteat!(g.fadjlist, srcs)
     end
-    g
+    return g
 end
 
 """
@@ -443,7 +455,7 @@ In graph `g`, remove all edges incident on destination vertices in `srcs`. If `r
 renumbering of destination vertices.
 """
 function delete_dsts!(g::BipartiteGraph, srcs; rm_verts = false)
-    delete_srcs!(invview(g), srcs; rm_verts)
+    return delete_srcs!(invview(g), srcs; rm_verts)
 end
 
 ###
@@ -483,8 +495,10 @@ end
 Base.length(it::BipartiteEdgeIter) = ne(it.g)
 Base.eltype(it::BipartiteEdgeIter) = edgetype(it.g)
 
-function Base.iterate(it::BipartiteEdgeIter{SRC, <:BipartiteGraph{T}},
-        state = (1, 1, SRC)) where {T}
+function Base.iterate(
+        it::BipartiteEdgeIter{SRC, <:BipartiteGraph{T}},
+        state = (1, 1, SRC)
+    ) where {T}
     (; g) = it
     neqs = nsrcs(g)
     neqs == 0 && return nothing
@@ -505,8 +519,10 @@ function Base.iterate(it::BipartiteEdgeIter{SRC, <:BipartiteGraph{T}},
     return nothing
 end
 
-function Base.iterate(it::BipartiteEdgeIter{DST, <:BipartiteGraph{T}},
-        state = (1, 1, DST)) where {T}
+function Base.iterate(
+        it::BipartiteEdgeIter{DST, <:BipartiteGraph{T}},
+        state = (1, 1, DST)
+    ) where {T}
     (; g) = it
     nvars = ndsts(g)
     nvars == 0 && return nothing

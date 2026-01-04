@@ -32,7 +32,9 @@ end
     m[2] = 4
     m2 = convert(
         Matching{
-            Union{Unassigned, String}, Vector{Union{Unassigned, String, Int}}}, m)
+            Union{Unassigned, String}, Vector{Union{Unassigned, String, Int}},
+        }, m
+    )
     @test m2 isa Matching{Union{Unassigned, String}, Vector{Union{Unassigned, String, Int}}}
 end
 

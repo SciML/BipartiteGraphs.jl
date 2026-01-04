@@ -19,7 +19,7 @@ function Graphs.incidence_matrix(g::BipartiteGraph, val = true)
         push!(I, i)
         push!(J, n)
     end
-    S = sparse(I, J, val, nsrcs(g), ndsts(g))
+    return S = sparse(I, J, val, nsrcs(g), ndsts(g))
 end
 
 end

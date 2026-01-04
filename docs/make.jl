@@ -7,7 +7,8 @@ const ExtMod = Base.get_extension(BipartiteGraphs, :BipartiteGraphsSparseArraysE
 cp("./docs/Manifest.toml", "./docs/src/assets/Manifest.toml", force = true)
 cp("./docs/Project.toml", "./docs/src/assets/Project.toml", force = true)
 
-makedocs(sitename = "BipartiteGraphs.jl",
+makedocs(
+    sitename = "BipartiteGraphs.jl",
     authors = "Chris Rackauckas",
     modules = [BipartiteGraphs, ExtMod],
     clean = true, doctest = false, linkcheck = true,
@@ -15,11 +16,15 @@ makedocs(sitename = "BipartiteGraphs.jl",
     format = Documenter.HTML(;
         assets = ["assets/favicon.ico"],
         canonical = "https://docs.sciml.ai/BipartiteGraphs/stable/",
-        prettyurls = (get(ENV, "CI", nothing) == "true")),
+        prettyurls = (get(ENV, "CI", nothing) == "true")
+    ),
     pages = [
         "Home" => "index.md",
-        "api.md"
-    ])
+        "api.md",
+    ]
+)
 
-deploydocs(repo = "github.com/SciML/BipartiteGraphs.jl.git";
-    push_preview = true)
+deploydocs(
+    repo = "github.com/SciML/BipartiteGraphs.jl.git";
+    push_preview = true
+)
