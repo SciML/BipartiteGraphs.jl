@@ -15,8 +15,8 @@ include("matching.jl")
 
 export BipartiteEdge, BipartiteGraph
 export 𝑠vertices, 𝑑vertices, has_𝑠vertex, has_𝑑vertex, 𝑠neighbors, 𝑑neighbors,
-       𝑠edges, 𝑑edges, nsrcs, ndsts, SRC, DST, set_neighbors!, invview,
-       delete_srcs!, delete_dsts!, complete, require_complete
+    𝑠edges, 𝑑edges, nsrcs, ndsts, SRC, DST, set_neighbors!, invview,
+    delete_srcs!, delete_dsts!, complete, require_complete
 include("bipartite_graph.jl")
 
 export maximal_matching, construct_augmenting_path!

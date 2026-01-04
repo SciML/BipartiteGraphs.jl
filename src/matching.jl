@@ -37,17 +37,22 @@ Convert a matching to have element type `Union{V, Int}`.
 Matching{V}(m::Matching) where {V} = convert(Matching{V}, m)
 
 function Base.convert(::Type{Matching{V, A}}, m::Matching) where {
-        V, A <: AbstractVector{Union{V, Int}}}
+        V, A <: AbstractVector{Union{V, Int}},
+    }
     typeof(m) == Matching{V, A} && return m
-    Matching{V}(convert(A, m.match),
-        m.inv_match === nothing ? nothing : convert(A, m.inv_match))
+    return Matching{V}(
+        convert(A, m.match),
+        m.inv_match === nothing ? nothing : convert(A, m.inv_match)
+    )
 end
 
 function Base.convert(::Type{Matching{V}}, m::Matching) where {V}
     eltype(m) === Union{V, Int} && return m
     VUT = typeof(similar(m.match, Union{V, Int}, 0))
-    Matching{V}(convert(VUT, m.match),
-        m.inv_match === nothing ? nothing : convert(VUT, m.inv_match))
+    return Matching{V}(
+        convert(VUT, m.match),
+        m.inv_match === nothing ? nothing : convert(VUT, m.inv_match)
+    )
 end
 
 """
@@ -71,7 +76,7 @@ Matching{U}(v::V) where {U, V <: AbstractVector} = Matching{U, V}(v, nothing)
 Construct a matching from forward and inverse matchings.
 """
 function Matching{U}(v::V, iv::Union{V, Nothing}) where {U, V <: AbstractVector}
-    Matching{U, V}(v, iv)
+    return Matching{U, V}(v, iv)
 end
 
 """
@@ -81,7 +86,7 @@ Construct a matching from a vector, inferring the unassigned type. The inverse m
 is not stored.
 """
 function Matching(v::V) where {U, V <: AbstractVector{Union{U, Int}}}
-    Matching{@isdefined(U) ? U : Unassigned, V}(v, nothing)
+    return Matching{@isdefined(U) ? U : Unassigned, V}(v, nothing)
 end
 
 """
@@ -91,7 +96,7 @@ Construct an empty matching with `m` vertices, all unassigned. The inverse match
 stored.
 """
 function Matching(m::Int)
-    Matching{Unassigned}(Union{Int, Unassigned}[unassigned for _ in 1:m], nothing)
+    return Matching{Unassigned}(Union{Int, Unassigned}[unassigned for _ in 1:m], nothing)
 end
 
 """
@@ -100,15 +105,17 @@ end
 Construct an empty matching with `m` vertices and custom unassigned type `U`.
 """
 function Matching{U}(m::Int) where {U}
-    Matching{Union{Unassigned, U}}(Union{Int, Unassigned, U}[unassigned for _ in 1:m],
-        nothing)
+    return Matching{Union{Unassigned, U}}(
+        Union{Int, Unassigned, U}[unassigned for _ in 1:m],
+        nothing
+    )
 end
 
 Base.size(m::Matching) = Base.size(m.match)
 Base.getindex(m::Matching, i::Integer) = m.match[i]
 Base.iterate(m::Matching, state...) = iterate(m.match, state...)
 function Base.copy(m::Matching{U}) where {U}
-    Matching{U}(copy(m.match), m.inv_match === nothing ? nothing : copy(m.inv_match))
+    return Matching{U}(copy(m.match), m.inv_match === nothing ? nothing : copy(m.inv_match))
 end
 
 """
@@ -147,7 +154,7 @@ Append an element to the source vertices of the matching `m`, and match it to `v
 """
 function Base.push!(m::Matching, v)
     push!(m.match, v)
-    if v isa Integer && m.inv_match !== nothing
+    return if v isa Integer && m.inv_match !== nothing
         for vv in (length(m.inv_match) + 1):v
             push!(m.inv_match, unassigned)
         end
@@ -161,8 +168,10 @@ end
 Populate the inverse matching if it is not already computed. The optional parameter `N`
 specifies the size of the inverse matching vector.
 """
-function complete(m::Matching{U},
-        N = maximum((x for x in m.match if isa(x, Int)); init = 0)) where {U}
+function complete(
+        m::Matching{U},
+        N = maximum((x for x in m.match if isa(x, Int)); init = 0)
+    ) where {U}
     m.inv_match !== nothing && return m
     inv_match = Union{U, Int}[unassigned for _ in 1:N]
     for (i, eq) in enumerate(m.match)
@@ -178,7 +187,7 @@ end
 Throw an error if the matching does not have the inverse matching computed.
 """
 @noinline function require_complete(m::Matching)
-    m.inv_match === nothing &&
+    return m.inv_match === nothing &&
         throw(ArgumentError("Backwards matching not defined. `complete` the matching first."))
 end
 

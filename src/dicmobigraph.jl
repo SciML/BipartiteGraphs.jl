@@ -32,13 +32,15 @@ the graph formed by expanding each directed hyperedge into `n` ordinary edges
 between the same vertices.
 """
 mutable struct DiCMOBiGraph{Transposed, I, G <: BipartiteGraph{I}, M <: Matching} <:
-               Graphs.AbstractGraph{I}
+    Graphs.AbstractGraph{I}
     graph::G
     ne::Union{Missing, Int}
     matching::M
-    function DiCMOBiGraph{Transposed}(g::G, ne::Union{Missing, Int},
-            m::M) where {Transposed, I, G <: BipartiteGraph{I}, M}
-        new{Transposed, I, G, M}(g, ne, m)
+    function DiCMOBiGraph{Transposed}(
+            g::G, ne::Union{Missing, Int},
+            m::M
+        ) where {Transposed, I, G <: BipartiteGraph{I}, M}
+        return new{Transposed, I, G, M}(g, ne, m)
     end
 end
 
@@ -48,7 +50,7 @@ end
 Construct a [`DiCMOBiGraph`](@ref) from a bipartite graph with an empty matching.
 """
 function DiCMOBiGraph{Transposed}(g::BipartiteGraph) where {Transposed}
-    DiCMOBiGraph{Transposed}(g, 0, Matching(ndsts(g)))
+    return DiCMOBiGraph{Transposed}(g, 0, Matching(ndsts(g)))
 end
 
 """
@@ -57,7 +59,7 @@ end
 Construct a [`DiCMOBiGraph`](@ref) from a bipartite graph and a matching.
 """
 function DiCMOBiGraph{Transposed}(g::BipartiteGraph, m::M) where {Transposed, M}
-    DiCMOBiGraph{Transposed}(g, missing, m)
+    return DiCMOBiGraph{Transposed}(g, missing, m)
 end
 
 """
@@ -67,15 +69,15 @@ Return a [`DiCMOBiGraph`](@ref) with the source and destination vertices swapped
 returned graph aliases `g`.
 """
 function invview(g::DiCMOBiGraph{Transposed}) where {Transposed}
-    DiCMOBiGraph{!Transposed}(invview(g.graph), g.ne, invview(g.matching))
+    return DiCMOBiGraph{!Transposed}(invview(g.graph), g.ne, invview(g.matching))
 end
 
 Graphs.is_directed(::Type{<:DiCMOBiGraph}) = true
 function Graphs.nv(g::DiCMOBiGraph{Transposed}) where {Transposed}
-    Transposed ? ndsts(g.graph) : nsrcs(g.graph)
+    return Transposed ? ndsts(g.graph) : nsrcs(g.graph)
 end
 function Graphs.vertices(g::DiCMOBiGraph{Transposed}) where {Transposed}
-    Transposed ? 𝑑vertices(g.graph) : 𝑠vertices(g.graph)
+    return Transposed ? 𝑑vertices(g.graph) : 𝑠vertices(g.graph)
 end
 
 """
@@ -89,9 +91,11 @@ struct CMONeighbors{Transposed, V}
     The vertex whose neighbors are being iterated over.
     """
     v::V
-    function CMONeighbors{Transposed}(g::DiCMOBiGraph{Transposed},
-            v::V) where {Transposed, V}
-        new{Transposed, V}(g, v)
+    function CMONeighbors{Transposed}(
+            g::DiCMOBiGraph{Transposed},
+            v::V
+        ) where {Transposed, V}
+        return new{Transposed, V}(g, v)
     end
 end
 
@@ -112,6 +116,7 @@ function Base.iterate(c::CMONeighbors{false}, (l, state...))
         end
         return vsrc, (l, r[2])
     end
+    return
 end
 Base.length(c::CMONeighbors{false}) = count(_ -> true, c)
 
@@ -126,7 +131,7 @@ function _neighbors(c::CMONeighbors{true})
 end
 function Base.length(c::CMONeighbors{true})
     nbors = _neighbors(c)
-    length(@something(nbors, 1)) - 1
+    return length(@something(nbors, 1)) - 1
 end
 
 Graphs.inneighbors(g::DiCMOBiGraph{true}, v) = CMONeighbors{true}(g, v)
@@ -134,7 +139,7 @@ Graphs.outneighbors(g::DiCMOBiGraph{true}, v) = outneighbors(invview(g), v)
 function Base.iterate(c::CMONeighbors{true})
     nbors = _neighbors(c)
     nbors === nothing && return nothing
-    iterate(c, (nbors,))
+    return iterate(c, (nbors,))
 end
 function Base.iterate(c::CMONeighbors{true}, (l, state...))
     while true
@@ -146,12 +151,13 @@ function Base.iterate(c::CMONeighbors{true}, (l, state...))
         end
         return r[1], (l, r[2])
     end
+    return
 end
 
 function _edges(g::DiCMOBiGraph{Transposed}) where {Transposed}
-    Transposed ?
-    ((w => v for w in inneighbors(g, v)) for v in vertices(g)) :
-    ((v => w for w in outneighbors(g, v)) for v in vertices(g))
+    return Transposed ?
+        ((w => v for w in inneighbors(g, v)) for v in vertices(g)) :
+        ((v => w for w in outneighbors(g, v)) for v in vertices(g))
 end
 
 Graphs.edges(g::DiCMOBiGraph) = (Graphs.SimpleEdge(p) for p in Iterators.flatten(_edges(g)))

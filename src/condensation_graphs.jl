@@ -15,10 +15,10 @@ function (T::Type{<:AbstractCondensationGraph})(g, sccs::Vector{Union{Int, Vecto
             scc_assignment[v] = i
         end
     end
-    T(g, sccs, scc_assignment)
+    return T(g, sccs, scc_assignment)
 end
 function (T::Type{<:AbstractCondensationGraph})(g, sccs::Vector{Vector{Int}})
-    T(g, Vector{Union{Int, Vector{Int}}}(sccs))
+    return T(g, Vector{Union{Int, Vector{Int}}}(sccs))
 end
 
 Graphs.is_directed(::Type{<:AbstractCondensationGraph}) = true
@@ -53,15 +53,23 @@ struct MatchedCondensationGraph{G <: DiCMOBiGraph} <: AbstractCondensationGraph
 end
 
 function Graphs.outneighbors(mcg::MatchedCondensationGraph, cc::Integer)
-    Iterators.flatten((mcg.scc_assignment[v′]
-                      for v′ in outneighbors(mcg.graph, v) if mcg.scc_assignment[v′] != cc)
-    for v in mcg.sccs[cc])
+    return Iterators.flatten(
+        (
+                mcg.scc_assignment[v′]
+                for v′ in outneighbors(mcg.graph, v) if mcg.scc_assignment[v′] != cc
+            )
+            for v in mcg.sccs[cc]
+    )
 end
 
 function Graphs.inneighbors(mcg::MatchedCondensationGraph, cc::Integer)
-    Iterators.flatten((mcg.scc_assignment[v′]
-                      for v′ in inneighbors(mcg.graph, v) if mcg.scc_assignment[v′] != cc)
-    for v in mcg.sccs[cc])
+    return Iterators.flatten(
+        (
+                mcg.scc_assignment[v′]
+                for v′ in inneighbors(mcg.graph, v) if mcg.scc_assignment[v′] != cc
+            )
+            for v in mcg.sccs[cc]
+    )
 end
 
 """
@@ -86,15 +94,19 @@ struct InducedCondensationGraph{G <: BipartiteGraph} <: AbstractCondensationGrap
 end
 
 function _neighbors(icg::InducedCondensationGraph, cc::Integer)
-    Iterators.flatten(Iterators.flatten(icg.graph.fadjlist[vsrc]
-                      for vsrc in icg.graph.badjlist[v])
-    for v in icg.sccs[cc])
+    return Iterators.flatten(
+        Iterators.flatten(
+                icg.graph.fadjlist[vsrc]
+                for vsrc in icg.graph.badjlist[v]
+            )
+            for v in icg.sccs[cc]
+    )
 end
 
 function Graphs.outneighbors(icg::InducedCondensationGraph, v::Integer)
-    (icg.scc_assignment[n] for n in _neighbors(icg, v) if icg.scc_assignment[n] > v)
+    return (icg.scc_assignment[n] for n in _neighbors(icg, v) if icg.scc_assignment[n] > v)
 end
 
 function Graphs.inneighbors(icg::InducedCondensationGraph, v::Integer)
-    (icg.scc_assignment[n] for n in _neighbors(icg, v) if icg.scc_assignment[n] < v)
+    return (icg.scc_assignment[n] for n in _neighbors(icg, v) if icg.scc_assignment[n] < v)
 end

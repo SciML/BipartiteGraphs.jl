@@ -16,7 +16,7 @@ end
 Construct a [`BipartiteAdjacencyList`](@ref) without highlighting.
 """
 function BipartiteAdjacencyList(u::Union{Vector{Int}, Nothing})
-    BipartiteAdjacencyList(u, nothing, unassigned)
+    return BipartiteAdjacencyList(u, nothing, unassigned)
 end
 
 """
@@ -42,7 +42,7 @@ struct HighlightInt
 end
 Base.typeinfo_implicit(::Type{HighlightInt}) = true
 function Base.show(io::IO, hi::HighlightInt)
-    if hi.match
+    return if hi.match
         printstyled(io, "(", color = hi.highlight)
         printstyled(io, hi.i, color = hi.highlight)
         printstyled(io, ")", color = hi.highlight)
@@ -58,7 +58,7 @@ function Base.show(io::IO, l::BipartiteAdjacencyList)
     else
         printstyled(io, "  ")
     end
-    if l.u === nothing
+    return if l.u === nothing
         printstyled(io, '⋅', color = :light_black)
     elseif isempty(l.u)
         printstyled(io, '∅', color = :light_black)
@@ -70,7 +70,7 @@ function Base.show(io::IO, l::BipartiteAdjacencyList)
         function choose_color(i)
             solvable = i in l.highlight_u
             matched = i == match
-            if !matched && solvable
+            return if !matched && solvable
                 :default
             elseif !matched && !solvable
                 :light_black
@@ -82,15 +82,21 @@ function Base.show(io::IO, l::BipartiteAdjacencyList)
         end
         if !isempty(setdiff(l.highlight_u, l.u))
             # Only for debugging, shouldn't happen in practice
-            print(io,
+            print(
+                io,
                 map(union(l.u, l.highlight_u)) do i
-                    HighlightInt(i, !(i in l.u) ? :light_red : choose_color(i),
-                        i == match)
-                end)
+                    HighlightInt(
+                        i, !(i in l.u) ? :light_red : choose_color(i),
+                        i == match
+                    )
+                end
+            )
         else
-            print(io, map(l.u) do i
-                HighlightInt(i, choose_color(i), i == match)
-            end)
+            print(
+                io, map(l.u) do i
+                    HighlightInt(i, choose_color(i), i == match)
+                end
+            )
         end
     end
 end
@@ -123,7 +129,7 @@ A matrix view of a [`BipartiteGraph`](@ref) for pretty-printing. Provides a tabu
 representation with source and destination adjacency information.
 """
 struct BipartiteGraphPrintMatrix <:
-       AbstractMatrix{Union{Label, Int, BipartiteAdjacencyList}}
+    AbstractMatrix{Union{Label, Int, BipartiteAdjacencyList}}
     bpg::BipartiteGraph
 end
 Base.size(bgpm::BipartiteGraphPrintMatrix) = (max(nsrcs(bgpm.bpg), ndsts(bgpm.bpg)) + 1, 3)
@@ -134,20 +140,26 @@ function Base.getindex(bgpm::BipartiteGraphPrintMatrix, i::Integer, j::Integer)
     elseif j == 1
         return i - 1
     elseif j == 2
-        return BipartiteAdjacencyList(i - 1 <= nsrcs(bgpm.bpg) ?
-                                      𝑠neighbors(bgpm.bpg, i - 1) : nothing)
+        return BipartiteAdjacencyList(
+            i - 1 <= nsrcs(bgpm.bpg) ?
+                𝑠neighbors(bgpm.bpg, i - 1) : nothing
+        )
     elseif j == 3
-        return BipartiteAdjacencyList(i - 1 <= ndsts(bgpm.bpg) ?
-                                      𝑑neighbors(bgpm.bpg, i - 1) : nothing)
+        return BipartiteAdjacencyList(
+            i - 1 <= ndsts(bgpm.bpg) ?
+                𝑑neighbors(bgpm.bpg, i - 1) : nothing
+        )
     else
         @assert false
     end
 end
 
 function Base.show(io::IO, b::BipartiteGraph)
-    print(io, "BipartiteGraph with (", length(b.fadjlist), ", ",
-        isa(b.badjlist, Int) ? b.badjlist : length(b.badjlist), ") (𝑠,𝑑)-vertices\n")
-    Base.print_matrix(io, BipartiteGraphPrintMatrix(b))
+    print(
+        io, "BipartiteGraph with (", length(b.fadjlist), ", ",
+        isa(b.badjlist, Int) ? b.badjlist : length(b.badjlist), ") (𝑠,𝑑)-vertices\n"
+    )
+    return Base.print_matrix(io, BipartiteGraphPrintMatrix(b))
 end
 
 """
@@ -160,8 +172,10 @@ function print_hyperedge_hint(io::IO, ::Type{V}, graph::HyperGraph{V}, edge_i::I
 
 function Base.show(io::IO, graph::HyperGraph{V}) where {V}
     printstyled(io, get(io, :cgraph_name, "HyperGraph"); color = :blue, bold = true)
-    println(io, " with ", length(graph.labels),
-        " vertices and ", nsrcs(graph.graph), " hyperedges")
+    println(
+        io, " with ", length(graph.labels),
+        " vertices and ", nsrcs(graph.graph), " hyperedges"
+    )
     compact = get(io, :compact, false)
     for edge_i in 𝑠vertices(graph.graph)
         if compact && edge_i > 5
@@ -177,4 +191,5 @@ function Base.show(io::IO, graph::HyperGraph{V}) where {V}
         end
         println(io, graph.invmap[edge_idxs[end]], ">")
     end
+    return
 end
