@@ -12,3 +12,10 @@ using Test
     @testset "HyperGraph" include("hypergraph.jl")
     @testset "Integration tests" include("integration.jl")
 end
+
+# Allocation tests run separately to avoid interference with precompilation
+if get(ENV, "GROUP", "all") == "all" || get(ENV, "GROUP", "all") == "nopre"
+    @testset "Allocation Tests" begin
+        include("alloc_tests.jl")
+    end
+end

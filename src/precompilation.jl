@@ -58,8 +58,9 @@ using PrecompileTools
         complete(m)
         copy(m)
 
-        # DiCMOBiGraph
-        dcmo = DiCMOBiGraph{false}(bg, m)
+        # DiCMOBiGraph construction (requires complete matching for some operations)
+        m_complete = complete(m, nsrcs(bg))
+        dcmo = DiCMOBiGraph{false}(bg, m_complete)
         vertices(dcmo)
         nv(dcmo)
         outneighbors(dcmo, 1)
@@ -71,9 +72,53 @@ using PrecompileTools
         outneighbors(dcmo_t, 1)
         ne(dcmo_t)
         collect(edges(dcmo_t))
+        dcmo_t = DiCMOBiGraph{true}(bg, m_complete)
+
+        # DiCMOBiGraph neighbor iteration (critical for TTFX)
+        collect(outneighbors(dcmo, 1))
+        collect(inneighbors(dcmo, 1))
+        collect(outneighbors(dcmo_t, 1))
+        collect(inneighbors(dcmo_t, 1))
+
+        # DiCMOBiGraph edge iteration
+        for edge in Graphs.edges(dcmo)
+        end
 
         # Empty graph construction
         empty_bg = BipartiteGraph(3, 2)
+
+        # Graph modification operations
+        bg_mod = BipartiteGraph([[1, 2], [2, 3]], 3)
+        bg_mod = complete(bg_mod)
+        set_neighbors!(bg_mod, 1, [3])
+        rem_edge!(bg_mod, 2, 2)
+        add_edge!(bg_mod, 2, 2)
+
+        # Condensation graphs
+        cond_fadjlist = [[1, 2], [2, 3], [3]]
+        cond_g = BipartiteGraph(cond_fadjlist, 3)
+        cond_g = complete(cond_g)
+        cond_m = Matching(3)
+        cond_m[1] = 1
+        cond_m[2] = 2
+        cond_m[3] = 3
+        cond_m_complete = complete(cond_m, 3)
+
+        # MatchedCondensationGraph (requires complete matching)
+        cond_dmog = DiCMOBiGraph{false}(cond_g, cond_m_complete)
+        sccs = [[1], [2], [3]]
+        mcg = MatchedCondensationGraph(cond_dmog, sccs)
+        nv(mcg)
+        vertices(mcg)
+        collect(outneighbors(mcg, 1))
+        collect(inneighbors(mcg, 1))
+
+        # InducedCondensationGraph
+        icg = InducedCondensationGraph(cond_g, sccs)
+        nv(icg)
+        vertices(icg)
+        collect(outneighbors(icg, 1))
+        collect(inneighbors(icg, 1))
 
         # HyperGraph
         hg = HyperGraph{Symbol}()
