@@ -5,7 +5,7 @@ Try to construct an augmenting path in matching and if such a path is found,
 update the matching accordingly.
 """
 function construct_augmenting_path!(
-        matching::Matching, g::BipartiteGraph, vsrc, dstfilter,
+        matching::Matching, g::BipartiteGraph, vsrc::Int, dstfilter,
         dcolor = falses(ndsts(g)), scolor = nothing
     )
     scolor === nothing || (scolor[vsrc] = true)
@@ -22,8 +22,10 @@ function construct_augmenting_path!(
     for vdst in 𝑠neighbors(g, vsrc)
         (dstfilter(vdst) && !dcolor[vdst]) || continue
         dcolor[vdst] = true
-        if construct_augmenting_path!(
-                matching, g, matching[vdst], dstfilter, dcolor,
+        # Check if the matched source is an Int before recursing to ensure type stability
+        matched_src = matching[vdst]
+        if matched_src isa Int && construct_augmenting_path!(
+                matching, g, matched_src, dstfilter, dcolor,
                 scolor
             )
             matching[vdst] = vsrc
@@ -33,6 +35,11 @@ function construct_augmenting_path!(
     return false
 end
 
+# Default filter that always returns true - defined as a type for specialization
+struct AlwaysTrue <: Function end
+(::AlwaysTrue)(x) = true
+const _always_true = AlwaysTrue()
+
 """
     maximal_matching(g::BipartiteGraph, [srcfilter], [dstfilter])
 
@@ -41,12 +48,16 @@ vertices, subject to the constraint that vertices for which `srcfilter` or `dstf
 return `false` may not be matched.
 """
 function maximal_matching(
-        g::BipartiteGraph, ::Type{U} = Unassigned; srcfilter = vsrc -> true,
-        dstfilter = vdst -> true
+        g::BipartiteGraph, ::Type{U} = Unassigned; srcfilter = _always_true,
+        dstfilter = _always_true
     ) where {U}
     matching = Matching{U}(max(nsrcs(g), ndsts(g)))
-    foreach(Iterators.filter(srcfilter, 𝑠vertices(g))) do vsrc
-        construct_augmenting_path!(matching, g, vsrc, dstfilter)
+    # Pre-allocate dcolor buffer to avoid allocations in construct_augmenting_path!
+    dcolor = falses(ndsts(g))
+    for vsrc in Iterators.filter(srcfilter, 𝑠vertices(g))
+        # Reset dcolor for each source vertex
+        fill!(dcolor, false)
+        construct_augmenting_path!(matching, g, vsrc, dstfilter, dcolor, nothing)
     end
     return matching
 end
