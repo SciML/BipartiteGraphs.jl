@@ -43,6 +43,14 @@ using PrecompileTools
         for edge in 𝑑edges(bg)
         end
 
+        # Edge collection (triggers different code paths than iteration)
+        collect(edges(bg))
+        collect(𝑠edges(bg))
+        collect(𝑑edges(bg))
+
+        # Vertex collection
+        collect(vertices(bg))
+
         # Maximal matching
         m = maximal_matching(bg)
 
@@ -55,7 +63,15 @@ using PrecompileTools
         dcmo = DiCMOBiGraph{false}(bg, m_complete)
         vertices(dcmo)
         nv(dcmo)
+        outneighbors(dcmo, 1)
+        ne(dcmo)
+        collect(edges(dcmo))
 
+        dcmo_t = DiCMOBiGraph{true}(bg, complete(m, nsrcs(bg)))
+        inneighbors(dcmo_t, 1)
+        outneighbors(dcmo_t, 1)
+        ne(dcmo_t)
+        collect(edges(dcmo_t))
         dcmo_t = DiCMOBiGraph{true}(bg, m_complete)
 
         # DiCMOBiGraph neighbor iteration (critical for TTFX)
@@ -120,6 +136,7 @@ using PrecompileTools
         incident_edges(hg, :a)
         for edge in edges(hg)
         end
+        collect(edges(hg))
         connected_components(hg)
     end
 end
