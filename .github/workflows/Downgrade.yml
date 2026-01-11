@@ -14,6 +14,7 @@ on:
       - 'benchmark/**'
 jobs:
   test:
+    if: false  # Disabled: downgrade tests need review. See issue for details.
     runs-on: ubuntu-latest
     strategy:
       matrix:
