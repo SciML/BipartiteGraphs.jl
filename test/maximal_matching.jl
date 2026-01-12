@@ -39,11 +39,11 @@ end
     @test matched_count <= 2  # Can't match more than ndsts
 
     # Test with filters
-    m2 = maximal_matching(g, s -> s <= 3, d -> true)
+    m2 = maximal_matching(g; srcfilter = s -> s <= 3, dstfilter = d -> true)
     @test m2 isa Matching
 
     # Test filtering out destination
-    m3 = maximal_matching(g, s -> true, d -> d == 1)
+    m3 = maximal_matching(g; srcfilter = s -> true, dstfilter = d -> d == 1)
     matched = [x for x in m3 if x isa Int]
     @test all(x == 1 for x in matched)
 end
