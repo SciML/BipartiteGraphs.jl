@@ -85,8 +85,8 @@ end
 
 An iterator for neighbors in a [`DiCMOBiGraph`](@ref).
 """
-struct CMONeighbors{Transposed, V}
-    g::DiCMOBiGraph{Transposed}
+struct CMONeighbors{Transposed, G <: DiCMOBiGraph{Transposed}, V}
+    g::G
     """
     The vertex whose neighbors are being iterated over.
     """
@@ -95,7 +95,7 @@ struct CMONeighbors{Transposed, V}
             g::DiCMOBiGraph{Transposed},
             v::V
         ) where {Transposed, V}
-        return new{Transposed, V}(g, v)
+        return new{Transposed, typeof(g), V}(g, v)
     end
 end
 
