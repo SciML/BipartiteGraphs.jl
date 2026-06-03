@@ -28,7 +28,7 @@ jobs:
           - "1"
           - "lts"
           - "pre"
-    uses: "SciML/.github/.github/workflows/tests.yml@master"
+    uses: "SciML/.github/.github/workflows/tests.yml@v1"
     with:
       julia-version: "${{ matrix.version }}"
       # Disable cache for self-hosted runners since they persist between runs

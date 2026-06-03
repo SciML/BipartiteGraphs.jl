@@ -1,4 +1,5 @@
 [default.extend-words]
+CMO = "CMO"
 nin = "nin"
 nd = "nd"
 Strat = "Strat"
