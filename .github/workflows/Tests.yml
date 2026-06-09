@@ -20,20 +20,7 @@ concurrency:
 
 jobs:
   tests:
-    name: "Tests"
-    strategy:
-      fail-fast: false
-      matrix:
-        version:
-          - "1"
-          - "lts"
-          - "pre"
-    uses: "SciML/.github/.github/workflows/tests.yml@v1"
+    uses: "SciML/.github/.github/workflows/grouped-tests.yml@v1"
     with:
-      julia-version: "${{ matrix.version }}"
-      # Disable cache for self-hosted runners since they persist between runs
-      # Set USE_SELF_HOSTED repository variable to 'true' when using self-hosted runners
-      self-hosted: ${{ vars.USE_SELF_HOSTED == 'true' }}
-      cache: ${{ vars.USE_SELF_HOSTED != 'true' }}
       coverage: false
     secrets: "inherit"
