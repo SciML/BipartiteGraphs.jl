@@ -1,4 +1,7 @@
 using Pkg
+using BipartiteGraphs
+using Graphs
+using Test
 
 const GROUP = get(ENV, "GROUP", "All")
 
@@ -7,10 +10,6 @@ if GROUP == "QA"
     Pkg.instantiate()
     include("qa/qa.jl")
 else
-    using BipartiteGraphs
-    using Graphs
-    using Test
-
     @testset "BipartiteGraphs.jl" begin
         @testset "Matching" include("matching.jl")
         @testset "BipartiteGraph" include("bipartite_graph.jl")
