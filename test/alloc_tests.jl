@@ -1,5 +1,6 @@
 using BipartiteGraphs
 using Graphs
+using Test
 using BipartiteGraphs: 𝑠neighbors, 𝑑neighbors, construct_augmenting_path!, _always_true, nsrcs, ndsts
 
 @testset "Allocation Tests - Zero Allocations in Hot Paths" begin

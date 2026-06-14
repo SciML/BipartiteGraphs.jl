@@ -1,9 +1,9 @@
-using BipartiteGraphs
-using Aqua
-using JET
-using Test
+using SafeTestsets
 
-@testset "Aqua" begin
+@safetestset "Aqua" begin
+    using BipartiteGraphs
+    using Aqua
+    using Test
     Aqua.test_all(BipartiteGraphs; unbound_args = false, deps_compat = false)
     # Aqua unbound type parameters: 1 found (Matching(v::V) where {U, V<:AbstractArray{Union{Int64, U}, 1}}
     # at src/matching.jl:88) — tracked in https://github.com/SciML/BipartiteGraphs.jl/issues/36
@@ -13,7 +13,10 @@ using Test
     @test_broken false
 end
 
-@testset "JET" begin
+@safetestset "JET" begin
+    using BipartiteGraphs
+    using JET
+    using Test
     # JET.report_package finds 10 possible errors stemming from the Union-typed `fadjlist`/`badjlist`
     # fields of BipartiteGraph/HyperGraph (no-matching-method on push!/+/searchsortedfirst/deleteat!/
     # Base.OneTo/empty! over Union{Int64, Vector{...}}) — tracked in
