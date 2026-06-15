@@ -14,12 +14,8 @@ on:
       - 'benchmark/**'
 jobs:
   test:
-    strategy:
-      matrix:
-        julia-version: ['lts']
-        group: ['InterfaceI']
+    name: "Downgrade"
     uses: "SciML/.github/.github/workflows/downgrade.yml@v1"
     with:
-      julia-version: "${{ matrix.julia-version }}"
-      group: "${{ matrix.group }}"
+      julia-version: "lts"
     secrets: "inherit"
