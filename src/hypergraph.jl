@@ -134,7 +134,7 @@ Graphs.has_vertex(g::HyperGraph{V}, v::V) where {V} = haskey(g.labels, v)
 Get the number of hyperedges in the hypergraph. Only counts non-empty hyperedges.
 """
 function Graphs.ne(g::HyperGraph)
-    return count(!isempty ∘ Base.Fix1(𝑠neighbors, g.graph), 𝑠vertices(g.graph))
+    return count(i -> !isempty(𝑠neighbors(g.graph, i)), 𝑠vertices(g.graph))
 end
 
 Graphs.edgetype(::HyperGraph{V}) where {V} = HyperEdge{V}
@@ -156,7 +156,7 @@ end
 
 function _edge_idx(g::HyperGraph{V}, vertices::HyperGraphEdge{V}) where {V}
     # Check if all vertices exist
-    all(Base.Fix1(haskey, g.labels), vertices) || return nothing
+    all(v -> haskey(g.labels, v), vertices) || return nothing
     # Convert to integer IDs
     vertex_ids = [g.labels[v] for v in vertices]
     sort!(vertex_ids)
@@ -290,13 +290,13 @@ function Graphs.connected_components(graph::HyperGraph{V}) where {V}
     invmap = graph.invmap
 
     # union all of the hyperedges
-    disjoint_sets = IntDisjointSet(length(invmap))
+    disjoint_sets = _IntDisjointSet(length(invmap))
     for edge_i in 𝑠vertices(bigraph)
         hyperedge = 𝑠neighbors(bigraph, edge_i)
         isempty(hyperedge) && continue
-        root, rest = Iterators.peel(hyperedge)
-        for vert in rest
-            union!(disjoint_sets, root, vert)
+        root = first(hyperedge)
+        for i in (firstindex(hyperedge) + 1):lastindex(hyperedge)
+            union!(disjoint_sets, root, hyperedge[i])
         end
     end
 

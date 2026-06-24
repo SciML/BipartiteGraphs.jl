@@ -1,13 +1,19 @@
 module BipartiteGraphs
 
-using DocStringExtensions
-using Graphs
-using DataStructures
+using DocStringExtensions: DocStringExtensions, FIELDS, METHODLIST, TYPEDEF,
+    TYPEDFIELDS, TYPEDSIGNATURES
+using Graphs: Graphs, AbstractGraph, connected_components, dst, edges, edgetype,
+    has_edge, has_vertex, inneighbors, ne, nv, outneighbors, src, vertices
+using Graphs.SimpleGraphs: SimpleDiGraph, SimpleEdge, add_edge!, add_vertex!, rem_edge!
+using DataStructures: DataStructures
+# DataStructures renamed `IntDisjointSets` to `IntDisjointSet` in v0.19; alias both
+# spellings to a single internal name so the explicit import is used on either version
+# (and so the alias does not shadow the imported name, which would make ExplicitImports
+# flag the import as stale).
 @static if pkgversion(DataStructures) >= v"0.19"
-    import DataStructures: IntDisjointSet
+    using DataStructures: IntDisjointSet as _IntDisjointSet
 else
-    import DataStructures: IntDisjointSets
-    const IntDisjointSet = IntDisjointSets
+    using DataStructures: IntDisjointSets as _IntDisjointSet
 end
 
 export Matching, Unassigned, unassigned

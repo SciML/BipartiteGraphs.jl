@@ -54,7 +54,7 @@ function maximal_matching(
     matching = Matching{U}(max(nsrcs(g), ndsts(g)))
     # Pre-allocate dcolor buffer to avoid allocations in construct_augmenting_path!
     dcolor = falses(ndsts(g))
-    for vsrc in Iterators.filter(srcfilter, 𝑠vertices(g))
+    for vsrc in (v for v in 𝑠vertices(g) if srcfilter(v))
         # Reset dcolor for each source vertex
         fill!(dcolor, false)
         construct_augmenting_path!(matching, g, vsrc, dstfilter, dcolor, nothing)

@@ -1,9 +1,9 @@
 module BipartiteGraphsSparseArraysExt
 
-using BipartiteGraphs
-using Graphs
+using BipartiteGraphs: BipartiteGraph, 𝑠vertices, 𝑠neighbors, nsrcs, ndsts
+using Graphs: Graphs
 using SparseArrays: sparse
-using DocStringExtensions
+using DocStringExtensions: TYPEDSIGNATURES
 
 """
     $TYPEDSIGNATURES
