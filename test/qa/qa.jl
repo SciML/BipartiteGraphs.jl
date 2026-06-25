@@ -1,6 +1,4 @@
 using BipartiteGraphs
-using Aqua
-using ExplicitImports
 using JET
 using SciMLTesting
 using Test
@@ -22,9 +20,7 @@ using Test
 #     element-type header when printing an array of `HighlightInt`.
 run_qa(
     BipartiteGraphs;
-    Aqua = Aqua,
     aqua_kwargs = (; unbound_args = false, deps_compat = false),
-    ExplicitImports = ExplicitImports,
     explicit_imports = true,
     ei_kwargs = (;
         all_qualified_accesses_are_public = (;
