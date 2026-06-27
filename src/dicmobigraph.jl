@@ -160,7 +160,7 @@ function _edges(g::DiCMOBiGraph{Transposed}) where {Transposed}
         ((v => w for w in outneighbors(g, v)) for v in vertices(g))
 end
 
-Graphs.edges(g::DiCMOBiGraph) = (Graphs.SimpleEdge(p) for p in Iterators.flatten(_edges(g)))
+Graphs.edges(g::DiCMOBiGraph) = (SimpleEdge(p) for p in Iterators.flatten(_edges(g)))
 function Graphs.ne(g::DiCMOBiGraph)
     if g.ne === missing
         g.ne = mapreduce(x -> length(x.iter), +, _edges(g))
