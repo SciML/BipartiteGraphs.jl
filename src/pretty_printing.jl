@@ -40,7 +40,6 @@ struct HighlightInt
     highlight::Symbol
     match::Bool
 end
-Base.typeinfo_implicit(::Type{HighlightInt}) = true
 function Base.show(io::IO, hi::HighlightInt)
     return if hi.match
         printstyled(io, "(", color = hi.highlight)
@@ -159,7 +158,7 @@ function Base.show(io::IO, b::BipartiteGraph)
         io, "BipartiteGraph with (", length(b.fadjlist), ", ",
         isa(b.badjlist, Int) ? b.badjlist : length(b.badjlist), ") (𝑠,𝑑)-vertices\n"
     )
-    return Base.print_matrix(io, BipartiteGraphPrintMatrix(b))
+    return Base.show(io, MIME"text/plain"(), BipartiteGraphPrintMatrix(b))
 end
 
 """

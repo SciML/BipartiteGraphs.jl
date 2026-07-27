@@ -84,9 +84,9 @@ Graphs.nv(::HyperGraph)
 Graphs.has_vertex(::HyperGraph{V}, ::V) where {V}
 Graphs.ne(::HyperGraph)
 Graphs.has_edge(::HyperGraph{V}, ::HyperEdge{V}) where {V}
-Graphs.rem_edge!(::HyperGraph{V}, ::HyperEdge{V}) where {V}
+Graphs.rem_edge!(::HyperGraph, ::HyperEdge)
 Graphs.edges(::HyperGraph{V}) where {V}
-Base.empty(::HyperGraph)
+Base.empty!(::HyperGraph)
 Graphs.connected_components(::HyperGraph{V}) where {V}
 neighbors
 incident_edges

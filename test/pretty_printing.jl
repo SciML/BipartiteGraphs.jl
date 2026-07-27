@@ -12,6 +12,8 @@ using Test
     str = String(take!(io))
     @test contains(str, "BipartiteGraph")
     @test contains(str, "2")  # number of src or dst vertices
+    @test contains(str, "src")
+    @test contains(str, "dst")
 end
 
 @testset "BipartiteEdge printing" begin

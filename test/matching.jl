@@ -21,6 +21,9 @@ end
     @test m[2] === unassigned
     @test m[3] == 3
 
+    integer_matching = Matching([1, 2, 3])
+    @test integer_matching isa Matching{Unassigned, Vector{Int}}
+
     # Test type conversion
     m2 = Matching{Unassigned}(m)
     @test eltype(m2) == Union{Unassigned, Int}

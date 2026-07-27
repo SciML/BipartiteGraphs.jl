@@ -85,8 +85,10 @@ end
 Construct a matching from a vector, inferring the unassigned type. The inverse matching
 is not stored.
 """
-function Matching(v::V) where {U, V <: AbstractVector{Union{U, Int}}}
-    return Matching{@isdefined(U) ? U : Unassigned, V}(v, nothing)
+function Matching(v::AbstractVector{T}) where {T}
+    T <: Integer && return Matching{Unassigned}(v)
+    Int <: T || throw(MethodError(Matching, (v,)))
+    return Matching{T}(v)
 end
 
 """

@@ -1,6 +1,6 @@
 module BipartiteGraphs
 
-using DocStringExtensions: DocStringExtensions, FIELDS, METHODLIST, TYPEDEF,
+using DocStringExtensions: DocStringExtensions, FIELDS, TYPEDEF,
     TYPEDFIELDS, TYPEDSIGNATURES
 using Graphs: Graphs, AbstractGraph, connected_components, dst, edges, edgetype,
     has_edge, has_vertex, inneighbors, ne, nv, outneighbors, src, vertices
