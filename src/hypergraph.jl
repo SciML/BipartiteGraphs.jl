@@ -140,7 +140,7 @@ end
 Graphs.edgetype(::HyperGraph{V}) where {V} = HyperEdge{V}
 
 """
-    $METHODLIST
+    $TYPEDSIGNATURES
 
 Check if a hyperedge exists in the hypergraph. The edge can be specified as a `HyperEdge`
 or as a collection of vertices.
@@ -171,7 +171,7 @@ function _edge_idx(g::HyperGraph{V}, vertices::HyperGraphEdge{V}) where {V}
 end
 
 """
-    $METHODLIST
+    $TYPEDSIGNATURES
 
 Remove a hyperedge from the hypergraph. The edge can be specified as a `HyperEdge` or as a
 collection of vertices. Returns `true` if the edge was removed, `false` if it did not exist.

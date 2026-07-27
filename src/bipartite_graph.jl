@@ -96,7 +96,7 @@ mutable struct BipartiteGraph{I <: Integer, M} <: Graphs.AbstractGraph{I}
 end
 
 """
-    $METHODLIST
+    $TYPEDSIGNATURES
 
 Construct a bipartite graph with `ne` edges, given the forward and backward
 adjacency lists. Instead of the backward adjacency list, an integer may be given
