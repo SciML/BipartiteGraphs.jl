@@ -17,7 +17,7 @@ BipartiteGraphsSparseArraysExt = "SparseArrays"
 
 [compat]
 DataStructures = "0.18, 0.19"
-DocStringExtensions = "0.8, 0.9"
+DocStringExtensions = "0.9"
 Graphs = "1.9"
 PrecompileTools = "1.1"
 SafeTestsets = "0.1, 1"
