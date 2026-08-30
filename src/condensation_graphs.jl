@@ -55,9 +55,9 @@ end
 function Graphs.outneighbors(mcg::MatchedCondensationGraph, cc::Integer)
     return Iterators.flatten(
         (
-                mcg.scc_assignment[v′]
+            mcg.scc_assignment[v′]
                 for v′ in outneighbors(mcg.graph, v) if mcg.scc_assignment[v′] != cc
-            )
+        )
             for v in mcg.sccs[cc]
     )
 end
@@ -65,9 +65,9 @@ end
 function Graphs.inneighbors(mcg::MatchedCondensationGraph, cc::Integer)
     return Iterators.flatten(
         (
-                mcg.scc_assignment[v′]
+            mcg.scc_assignment[v′]
                 for v′ in inneighbors(mcg.graph, v) if mcg.scc_assignment[v′] != cc
-            )
+        )
             for v in mcg.sccs[cc]
     )
 end
@@ -96,9 +96,9 @@ end
 function _neighbors(icg::InducedCondensationGraph, cc::Integer)
     return Iterators.flatten(
         Iterators.flatten(
-                icg.graph.fadjlist[vsrc]
+            icg.graph.fadjlist[vsrc]
                 for vsrc in icg.graph.badjlist[v]
-            )
+        )
             for v in icg.sccs[cc]
     )
 end
