@@ -17,6 +17,7 @@ end
     # Test from vector
     v = Union{Int, Unassigned}[1, unassigned, 3, unassigned, 5]
     m = Matching(v)
+    @test m isa Matching{Unassigned, Vector{Union{Int, Unassigned}}}
     @test m[1] == 1
     @test m[2] === unassigned
     @test m[3] == 3

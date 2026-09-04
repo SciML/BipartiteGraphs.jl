@@ -85,10 +85,16 @@ end
 Construct a matching from a vector, inferring the unassigned type. The inverse matching
 is not stored.
 """
+function _type_without_int(T)
+    T <: Int && return Union{}
+    T isa Union || return T
+    return Union{_type_without_int(T.a), _type_without_int(T.b)}
+end
+
 function Matching(v::AbstractVector{T}) where {T}
     T <: Integer && return Matching{Unassigned}(v)
     Int <: T || throw(MethodError(Matching, (v,)))
-    return Matching{T}(v)
+    return Matching{_type_without_int(T)}(v)
 end
 
 """
