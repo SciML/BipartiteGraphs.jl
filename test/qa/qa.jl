@@ -1,4 +1,5 @@
 using BipartiteGraphs
+using JET
 using SciMLTesting
 using Test
 
@@ -13,4 +14,4 @@ using SparseArrays
     @test Base.get_extension(BipartiteGraphs, :BipartiteGraphsSparseArraysExt) !== nothing
 end
 
-run_qa(BipartiteGraphs)
+run_qa(BipartiteGraphs; jet_kwargs = (; mode = :basic))
