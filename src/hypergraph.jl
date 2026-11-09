@@ -239,8 +239,9 @@ function Base.empty!(g::HyperGraph)
     empty!(g.invmap)
     # Fully clear the underlying bipartite graph
     empty!(g.graph.fadjlist)
-    if g.graph.badjlist isa AbstractVector
-        empty!(g.graph.badjlist)
+    badjlist = g.graph.badjlist
+    if badjlist isa AbstractVector
+        empty!(badjlist)
     else
         g.graph.badjlist = 0
     end

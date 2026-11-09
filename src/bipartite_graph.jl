@@ -237,7 +237,8 @@ Obtain the number of source vertices in the graph.
 Obtain the number of destination vertices in the graph.
 """
 function 𝑑vertices(g::BipartiteGraph)
-    return g.badjlist isa AbstractVector ? axes(g.badjlist, 1) : Base.OneTo(g.badjlist)
+    badjlist = g.badjlist
+    return badjlist isa AbstractVector ? axes(badjlist, 1) : Base.OneTo(badjlist)
 end
 """
     $TYPEDSIGNATURES
@@ -381,12 +382,14 @@ Add a vertex of type `type` to graph `g`.
 """
 function Graphs.add_vertex!(g::BipartiteGraph{T}, type::VertType) where {T}
     if type === DST
-        if g.badjlist isa AbstractVector
-            push!(g.badjlist, T[])
-            return length(g.badjlist)
+        badjlist = g.badjlist
+        if badjlist isa AbstractVector
+            push!(badjlist, T[])
+            return length(badjlist)
         else
-            g.badjlist += 1
-            return g.badjlist
+            badjlist += 1
+            g.badjlist = badjlist
+            return badjlist
         end
     elseif type === SRC
         push!(g.fadjlist, T[])
@@ -406,16 +409,17 @@ function set_neighbors!(g::BipartiteGraph, i::Integer, new_neighbors)
     old_nneighbors = length(old_neighbors)
     new_nneighbors = length(new_neighbors)
     g.ne += new_nneighbors - old_nneighbors
-    if isa(g.badjlist, AbstractVector)
+    badjlist = g.badjlist
+    if isa(badjlist, AbstractVector)
         for n in old_neighbors
-            @inbounds list = g.badjlist[n]
+            @inbounds list = badjlist[n]
             index = searchsortedfirst(list, i)
             if 1 <= index <= length(list) && list[index] == i
                 deleteat!(list, index)
             end
         end
         for n in new_neighbors
-            @inbounds list = g.badjlist[n]
+            @inbounds list = badjlist[n]
             index = searchsortedfirst(list, i)
             if !(1 <= index <= length(list) && list[index] == i)
                 insert!(list, index, i)
